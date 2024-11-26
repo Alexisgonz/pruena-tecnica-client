@@ -24,4 +24,8 @@ export class AuthService {
       })
     );
   }
+
+  isAuthenticated() {
+    return this.tokenService.isValid() && !this.tokenService.isExpired();
+  }
 }

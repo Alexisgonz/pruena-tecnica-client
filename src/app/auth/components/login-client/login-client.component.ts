@@ -1,35 +1,21 @@
-import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import {
-  Form,
   FormBuilder,
   FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { RuleCssBySelector } from '../../../shared/directives/add-rules-css.directive';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-login-client',
   templateUrl: './login-client.component.html',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ButtonModule,
-    ReactiveFormsModule,
-    InputTextModule,
-    InputNumberModule,
-  ],
 })
 export class LoginClientComponent implements OnInit {
   loginForm!: FormGroup;
   rule!: RuleCssBySelector;
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
     this.formInit();
@@ -42,5 +28,18 @@ export class LoginClientComponent implements OnInit {
     });
   }
 
-  submitLogin(): void {}
+  submitLogin(): void {
+    const rawValue = this.loginForm.getRawValue();
+    this.authService.login(rawValue).subscribe({
+      next: () => {
+        this.redirectToRoot();
+        console.log('Login success');
+      },
+    }
+    );
+  }
+
+  redirectToRoot(): void {
+    this.router.navigateByUrl('/tareas');
+  }
 }

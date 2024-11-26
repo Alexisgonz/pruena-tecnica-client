@@ -6,8 +6,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class TokenService {
   private decodedToken: BehaviorSubject<UserToken | null>;
   decodedToken$: Observable<UserToken | null>;
-  tokenStorage = 'token_innovagest';
-  serial = 'serial';
+  tokenStorage = 'access_token';
 
   constructor() {
     this.decodedToken = new BehaviorSubject<UserToken | null>(
@@ -40,5 +39,20 @@ export class TokenService {
 
     const decoded = JSON.parse(window.atob(parts[1]));
     return decoded;
+  }
+
+  isValid() {
+    const token = this.getToken();
+    return !!token;
+  }
+
+  isExpired() {
+    const token = this.getDecodedToken();
+    if (!token) {
+      return true;
+    }
+    const date = new Date(0);
+    date.setUTCSeconds(token.exp);
+    return !(date.valueOf() > new Date().valueOf());
   }
 }
