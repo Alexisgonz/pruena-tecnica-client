@@ -18,10 +18,7 @@
             />
           </div>
           <div>
-            <p-iconField
-              iconPosition="left"
-              class="ml-auto"
-            >
+            <p-iconField iconPosition="left" class="ml-auto">
               <p-inputIcon>
                 <i class="pi pi-search"></i>
               </p-inputIcon>
@@ -37,46 +34,27 @@
       </ng-template>
       <ng-template pTemplate="header">
         <tr>
+          <th style="width: 5%">Id</th>
           <th style="width: 20%">Título</th>
           <th style="width: 20%">Descripción</th>
           <th style="width: 20%">Fecha Creación</th>
           <th style="width: 20%">Fecha Actualización</th>
-          <th
-            pSortableColumn="completada"
-            style="width: 20%"
-            class="tw-text-center"
-          >
-            ¿Completada?
-            <p-sortIcon field="completada" />
-          </th>
           <th></th>
         </tr>
       </ng-template>
-      <ng-template
-        pTemplate="body"
-        let-tarea
-      >
+      <ng-template pTemplate="body" let-tarea>
         <tr>
-          <td>{{ tarea.titulo }}</td>
+          <td>{{ tarea.id }}</td>
+          <td>{{ tarea.nombre }}</td>
           <td>{{ tarea.descripcion }}</td>
-          <td>{{ tarea.fechaCreacion | date }}</td>
-          <td>{{ tarea.fechaActualizacion | date }}</td>
-          <td class="tw-text-center">
-            <i
-              [class]="tarea.completada ? 'pi pi-check' : 'pi pi-times'"
-              [style]="
-                tarea.completada
-                  ? 'font-size: 1rem; color: green;'
-                  : 'font-size: 1rem; color: red;'
-              "
-            ></i>
-          </td>
+          <td>{{ tarea.createdAt | date }}</td>
+          <td>{{ tarea.updatedAt | date }}</td>
           <td>
             <button
               pButton
               type="button"
               icon="pi pi-ellipsis-v"
-              class="p-button-secondary p-button-rounded p-button-text options-menu"
+              class="p-button-secondary p-button-rounded p-button-text"
               (click)="setMenu(tarea); menu.toggle($event)"
             ></button>
           </td>
@@ -104,12 +82,7 @@
   </div>
 </div>
 
-<p-tieredMenu
-  #menu
-  [model]="contextMenu"
-  [popup]="true"
-  appendTo="body"
->
+<p-tieredMenu #menu [model]="contextMenu" [popup]="true" appendTo="body">
 </p-tieredMenu>
 
 <p-confirmDialog />

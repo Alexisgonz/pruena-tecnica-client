@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
-import { CreateTarea, Tarea } from '../../../shared/interfaces/tareas.interface';
+import {
+  CreateTarea,
+  Tarea,
+} from '../../../shared/interfaces/tareas.interface';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TareasService {
   apiUrl = environment.api;
   tareas = `${this.apiUrl}/tareas`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getTareas(): Observable<Tarea[]> {
     return this.http.get<Tarea[]>(this.tareas);
@@ -26,7 +29,7 @@ export class TareasService {
   }
 
   deleteTarea(id: number) {
-    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
+    return this.http.delete<boolean>(`${this.tareas}/${id}`);
   }
 
   getTareasPaginadas(
@@ -34,7 +37,7 @@ export class TareasService {
     limit: number,
     userId: number
   ): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/paginadas`, {
+    return this.http.post<any>(`${this.tareas}/paginadas`, {
       page,
       limit,
       userId,
