@@ -75,7 +75,7 @@ export class TareasListComponent implements OnInit {
 
           this.confirmationService.confirm({
             message: 'Confirmas que borraras la tarea?',
-            header: 'Corfirmación',
+            header: 'Corfirmación.',
             icon: 'pi pi-exclamation-triangle',
             acceptIcon: 'none',
             rejectIcon: 'none',
