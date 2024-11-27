@@ -26,7 +26,18 @@ export class TareasService {
   }
 
   deleteTarea(id: number) {
-    return this.http.delete<Tarea>(`${this.tareas}/${id}`);
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
   }
 
+  getTareasPaginadas(
+    page: number,
+    limit: number,
+    userId: number
+  ): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/paginadas`, {
+      page,
+      limit,
+      userId,
+    });
+  }
 }

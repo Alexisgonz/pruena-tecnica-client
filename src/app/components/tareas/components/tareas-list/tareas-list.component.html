@@ -1,3 +1,115 @@
-<div class="card flex justify-content-center">
-  <p-button (onClick)="addNuewTarea()" label="Show" />
+<div class="tw-container">
+  <div class="card">
+    <p-table
+      #dt
+      [value]="tareas || []"
+      [paginator]="false"
+      [globalFilterFields]="['titulo', 'descripcion']"
+      [tableStyle]="{ 'min-width': '75rem' }"
+    >
+      <ng-template pTemplate="caption">
+        <div class="tw-flex tw-justify-between">
+          <div>
+            <p-button
+              label="Limpiar"
+              [outlined]="true"
+              icon="pi pi-filter-slash"
+              (onClick)="clear(dt)"
+            />
+          </div>
+          <div>
+            <p-iconField
+              iconPosition="left"
+              class="ml-auto"
+            >
+              <p-inputIcon>
+                <i class="pi pi-search"></i>
+              </p-inputIcon>
+              <input
+                pInputText
+                type="text"
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                placeholder="Buscar..."
+              />
+            </p-iconField>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 20%">Título</th>
+          <th style="width: 20%">Descripción</th>
+          <th style="width: 20%">Fecha Creación</th>
+          <th style="width: 20%">Fecha Actualización</th>
+          <th
+            pSortableColumn="completada"
+            style="width: 20%"
+            class="tw-text-center"
+          >
+            ¿Completada?
+            <p-sortIcon field="completada" />
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="body"
+        let-tarea
+      >
+        <tr>
+          <td>{{ tarea.titulo }}</td>
+          <td>{{ tarea.descripcion }}</td>
+          <td>{{ tarea.fechaCreacion | date }}</td>
+          <td>{{ tarea.fechaActualizacion | date }}</td>
+          <td class="tw-text-center">
+            <i
+              [class]="tarea.completada ? 'pi pi-check' : 'pi pi-times'"
+              [style]="
+                tarea.completada
+                  ? 'font-size: 1rem; color: green;'
+                  : 'font-size: 1rem; color: red;'
+              "
+            ></i>
+          </td>
+          <td>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-ellipsis-v"
+              class="p-button-secondary p-button-rounded p-button-text options-menu"
+              (click)="setMenu(tarea); menu.toggle($event)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="card flex justify-content-center">
+    <p-paginator
+      (onPageChange)="onPageChange($event)"
+      [first]="page * rows"
+      [rows]="rows"
+      [totalRecords]="120"
+      [rowsPerPageOptions]="[10, 20, 50]"
+    />
+  </div>
+  <div class="tw-pt-0 tw-flex tw-justify-start">
+    <p-button
+      type="button"
+      (click)="onAdd()"
+      label="Nueva Tarea"
+      pTooltip="Crear Nueva Tarea"
+    ></p-button>
+  </div>
 </div>
+
+<p-tieredMenu
+  #menu
+  [model]="contextMenu"
+  [popup]="true"
+  appendTo="body"
+>
+</p-tieredMenu>
+
+<p-confirmDialog />

@@ -9,7 +9,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TareasFormComponent } from './components/tareas-form/tareas-form.component';
 import { ToastServiceService } from '../../shared/service/toast-service.service';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { TieredMenuModule } from 'primeng/tieredmenu';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { PaginatorModule } from 'primeng/paginator';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 const routes: Routes = [
   {
@@ -26,8 +32,14 @@ const routes: Routes = [
     InputTextModule,
     ReactiveFormsModule,
     DynamicDialogModule,
+    TieredMenuModule,
+    BreadcrumbModule,
+    IconFieldModule,
+    InputIconModule,
+    PaginatorModule,
+     ConfirmDialogModule
   ],
   declarations: [TareasListComponent, TareasFormComponent],
-  providers: [DialogService, ToastServiceService, MessageService],
+  providers: [DialogService, ToastServiceService, MessageService, ConfirmationService],
 })
 export class TareasModule {}

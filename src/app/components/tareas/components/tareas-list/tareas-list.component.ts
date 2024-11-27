@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { Table } from 'primeng/table';
 import { Tarea } from '../../../../shared/interfaces/tareas.interface';
 import { TareasFormComponent } from '../tareas-form/tareas-form.component';
 import { TareasService } from '../../service/tareas.service';
 import { ToastServiceService } from '../../../../shared/service/toast-service.service';
+import { TieredMenu } from 'primeng/tieredmenu'
+import { Table } from 'primeng/table'
+import { take } from 'rxjs'
 
 @Component({
   selector: 'app-tareas-list',
@@ -13,112 +15,157 @@ import { ToastServiceService } from '../../../../shared/service/toast-service.se
   styleUrls: ['./tareas-list.component.css'],
 })
 export class TareasListComponent implements OnInit {
-  @ViewChild('dt', { static: true }) dt!: Table;
-  menuOptions: MenuItem[] = [];
-  selectedRow: Tarea | undefined;
-  tarea: Tarea[] = [];
+  items: MenuItem[] | undefined;
+  contextMenu: MenuItem[] = [];
+  home: MenuItem | undefined;
+  tareas!: Tarea[];
+  usuaroLogedd!: string;
+  userId!: number;
+  @ViewChild('menu') menu!: TieredMenu;
+  page: number = 0;
+  totalRecords!: number;
+  rows: number = 10;
 
   constructor(
     private dialogSerivce: DialogService,
     private tareaService: TareasService,
-    private toastService: ToastServiceService
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {}
 
-  ngOnInit(): void {
-    this.configTable();
-    this.setMenuOptions();
+  ngOnInit() {
+    this.items = [{ label: 'Mis Tareas' }];
 
-    this.tareaService.getTareas().subscribe((tareas) => {
-      this.tarea = tareas;
+    this.home = { icon: 'pi pi-home', routerLink: '/' };
 
-    });
+    this.lazyTareas();
   }
 
-  configTable(): void {
-    this.dt.sortMode = 'multiple';
-    this.dt.sortOrder = 1;
-    this.dt.sortField = 'id';
-    this.dt.multiSortMeta = [{ field: 'nombre', order: -1 }];
-    this.dt.columns = [
-      { field: 'id', header: 'ID' },
-      { field: 'nombre', header: 'Nombre' },
-      { field: 'descripcion', header: 'Descripción' },
-      { field: 'color', header: 'Color' },
-    ];
-    this.dt.paginator = false;
-    this.dt.rows = 10;
-    this.dt.responsive = true;
-    this.dt.columnResizeMode = 'expand';
-    this.dt.globalFilterFields = ['nombre', 'descripcion'];
-    this.dt.reorderableColumns = true;
-    this.dt.rowHover = true;
-    this.dt.styleClass = 'p-datatable-striped p-datatable-gridlines';
-    this.dt.paginator = true;
-    this.dt.rows = 10;
-    this.dt.showCurrentPageReport = true;
-    this.dt.currentPageReportTemplate =
-      'Mostrando {first} a {last} de {totalRecords}';
-    this.dt.rowsPerPageOptions = [10, 25, 50];
+
+  lazyTareas() {
+    this.tareaService
+      .getTareasPaginadas(this.page, this.rows, this.userId)
+      .subscribe({
+        next: (response) => {
+          this.tareas = response.data;
+          this.totalRecords = response.totalItems;
+        },
+        error: (error) => console.error('Error al cargar tareas:', error),
+      });
   }
 
-  setMenuOptions(): void {
-    this.menuOptions = [
+   onPageChange(event: any) {
+    this.page = event.page;
+    this.rows = event.rows;
+    this.lazyTareas();
+  }
+
+  setMenuOptions(tarea: Tarea): MenuItem[] {
+    return [
       {
         label: 'Editar',
         icon: 'pi pi-pencil',
-        command: () => this.editTarea(),
-      },
-      {
-        separator: true,
+        command: () => this.viewEdit(tarea),
       },
       {
         label: 'Eliminar',
         icon: 'pi pi-trash',
-        styleClass: 'danger-text',
         command: () => {
-          if (!this.selectedRow) return;
-          this.toastService.showSuccess(
-            '¿Estás seguro de eliminar esta tarea?'
-          );
+          console.log('log');
 
-          this.deleteSelectedRow();
+          this.confirmationService.confirm({
+            message: 'Confirmas que borraras la tarea?',
+            header: 'Corfirmación',
+            icon: 'pi pi-exclamation-triangle',
+            acceptIcon: 'none',
+            rejectIcon: 'none',
+            rejectButtonStyleClass: 'p-button-text',
+            accept: () => {
+              this.delete(tarea.id);
+            },
+            reject: () => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Atención',
+                detail: 'Sin Cambios',
+                life: 3000,
+              });
+            },
+          });
         },
       },
     ];
   }
 
-  deleteSelectedRow(): void {
-    if (!this.selectedRow) return;
-
-    this.tareaService.deleteTarea(this.selectedRow?.id).subscribe(() => {
-      this.toastService.showSuccess('Tarea eliminada');
-    });
+  clear(table: Table) {
+    table.clear();
   }
 
-  addNuewTarea(): void {
-    const dialogRef = this.dialogSerivce.open(TareasFormComponent, {
-      header: 'Nueva Tarea',
-      width: '70%',
-      contentStyle: { 'max-height': '350px', overflow: 'auto' },
-    });
-    dialogRef.onClose.subscribe((result) => {
-      if (result) {
-        console.log(result);
-      }
-    });
+  setMenu(tarea: Tarea) {
+    this.contextMenu = this.setMenuOptions(tarea);
   }
 
-  editTarea(): void {
+  viewEdit(tarea: Tarea) {
     const dialogRef = this.dialogSerivce.open(TareasFormComponent, {
       header: 'Editar Tarea',
-      width: '70%',
-      data: this.selectedRow,
-      contentStyle: { 'max-height': '350px', overflow: 'auto' },
+      width: '60vw',
+      baseZIndex: 10000,
+      data: { tarea },
+      dismissableMask: false,
+      maximizable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
     });
-    dialogRef.onClose.subscribe((result) => {
-      if (result) {
-        console.log(result);
+    dialogRef.onClose.subscribe((res: any) => {
+      if (res) {
+        this.lazyTareas();
       }
+    });
+  }
+
+   onAdd() {
+    const dialogRef = this.dialogSerivce.open(TareasFormComponent, {
+      header: 'Nueva Tarea',
+      width: '60vw',
+      baseZIndex: 10000,
+      data: { userId: this.userId },
+      dismissableMask: false,
+      maximizable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+    });
+    dialogRef.onClose.subscribe((res: any) => {
+      if (res) {
+        this.lazyTareas();
+      }
+    });
+  }
+
+  delete(id: number) {
+    if (!id) return;
+    this.tareaService
+      .deleteTarea(id)
+      .pipe(take(1))
+      .subscribe({
+        next:(res: boolean) => {
+          if (res) {
+            this.lazyTareas();
+          }
+        },
+        error: (err: Error) => {
+          this
+        },
+      });
+  }
+  showError() {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Atención',
+      detail: 'Error Inesperado',
     });
   }
 }
