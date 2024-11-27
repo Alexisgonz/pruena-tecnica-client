@@ -12,5 +12,5 @@ import { AuthInterceptor } from './shared/service/auth.interceptor';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'prueba-tecnica-fromt';
+  title = 'prueba-tecnica-front';
 }
