@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TareasService } from '../../service/tareas.service';
 import { Tarea } from '../../../../shared/interfaces/tareas.interface';
@@ -23,12 +23,16 @@ export class TareasFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    if (this.config.data) {
+      console.log('Datos recibidos para edición:', this.config.data);
+      this.form.patchValue(this.config.data);
+    }
   }
 
   initForm(): void {
     this.form = this.fb.group({
-      nombre: [''],
-      descripcion: [''],
+      nombre: ['', Validators.required],
+      descripcion: ['', Validators.required],
     });
   }
 
@@ -38,21 +42,27 @@ export class TareasFormComponent implements OnInit {
     if (this.form.invalid) return;
 
     const formValue = this.form.getRawValue();
-
-    if (this.config.data) {
-      this.tareasService
-        .updateTarea(this.config.data.id, formValue)
-        .subscribe((tarea) => {
+    if (this.config.data?.id) {
+      this.tareasService.updateTarea(this.config.data.id, formValue).subscribe({
+        next: (tarea) => {
           this.ref.close(tarea);
           this.toastService.showSuccess('Tarea actualizada');
-        });
-      return;
+        },
+        error: (error) => {
+          console.error('Error al actualizar la tarea:', error);
+        },
+      });
+    } else {
+      this.tareasService.createTarea(formValue).subscribe({
+        next: (tarea) => {
+          this.ref.close(tarea);
+          this.toastService.showSuccess('Tarea creada');
+        },
+        error: (error) => {
+          console.error('Error al crear la tarea:', error);
+        },
+      });
     }
-
-    this.tareasService.createTarea(formValue).subscribe((tarea) => {
-      this.ref.close(tarea);
-      this.toastService.showSuccess('Tarea creada');
-    });
   }
 
   onCancel() {

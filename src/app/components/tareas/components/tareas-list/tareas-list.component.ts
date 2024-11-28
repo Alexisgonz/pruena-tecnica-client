@@ -110,7 +110,7 @@ export class TareasListComponent implements OnInit {
       header: 'Editar Tarea',
       width: '60vw',
       baseZIndex: 10000,
-      data: { tarea },
+      data: tarea,
       dismissableMask: false,
       maximizable: true,
       breakpoints: {

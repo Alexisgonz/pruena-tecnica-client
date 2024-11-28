@@ -1,11 +1,13 @@
 <div [formGroup]="form">
-  <span class="p-text-secondary block mb-5">Ingrese la informacion la tarea</span>
+  <span class="p-text-secondary block mb-5"
+    >Ingrese la informacion la tarea</span
+  >
   <div class="flex align-items-center gap-3 mb-3 ml-8">
     <label for="nombre" class="font-semibold w-6rem">Nombre</label>
     <input
       pInputText
       id="nombre"
-      class="flex-auto"
+      class="border border-gray-300 rounded-lg p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
       autocomplete="off"
       formControlName="nombre"
     />
@@ -15,7 +17,7 @@
     <input
       pInputText
       id="descripcion"
-      class="flex-auto"
+      class="border border-gray-300 rounded-lg p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
       autocomplete="off"
       formControlName="descripcion"
     />

@@ -17,18 +17,15 @@
               (onClick)="clear(dt)"
             />
           </div>
-          <div>
-            <p-iconField iconPosition="left" class="ml-auto">
-              <p-inputIcon>
-                <i class="pi pi-search"></i>
-              </p-inputIcon>
-              <input
-                pInputText
-                type="text"
-                (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                placeholder="Buscar..."
-              />
-            </p-iconField>
+          <div class="search-container">
+            <i class="pi pi-search search-icon"></i>
+            <input
+              pInputText
+              type="text"
+              class="search-input"
+              placeholder="Buscar..."
+              (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            />
           </div>
         </div>
       </ng-template>

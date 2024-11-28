@@ -25,7 +25,7 @@ export class TareasService {
   }
 
   updateTarea(id: number, data: Partial<CreateTarea>): Observable<Tarea> {
-    return this.http.put<Tarea>(`${this.tareas}/${id}`, data);
+    return this.http.patch<Tarea>(`${this.tareas}/${id}`, data);
   }
 
   deleteTarea(id: number) {

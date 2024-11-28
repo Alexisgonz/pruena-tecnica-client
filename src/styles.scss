@@ -1,13 +1,83 @@
-
 @import 'primeng/resources/themes/lara-light-blue/theme.css';
 @import 'primeng/resources/primeng.css';
+@import 'primeicons/primeicons.css'; /* Importa los íconos si aún no lo has hecho */
 
+/* Configuración de capas de Tailwind */
 @layer tailwind-base, primeng, tailwind-utilities;
 
-// @layer tailwind-base {
-//   @tailwind base;
-// }
+/* Base de Tailwind: si necesitas redefinir base */
+@layer tailwind-base {
+  @tailwind base;
+}
 
+/* Ajustes específicos de PrimeNG */
+.p-tieredmenu {
+  z-index: 1050;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  @apply transition-transform duration-200 ease-in-out;
+}
+
+/* Estilo para botones de PrimeNG */
+.p-button {
+  all: unset; /* Reinicia estilos para evitar conflictos */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-color, #007ad9);
+  color: #ffffff;
+  border: none;
+  border-radius: 0.25rem;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.p-button:hover {
+  background-color: var(--primary-color-hover, #005fa3);
+}
+
+.p-button-secondary {
+  background-color: var(--secondary-color, #6c757d);
+  color: #ffffff;
+}
+
+.p-button-secondary:hover {
+  background-color: #5a6268;
+}
+
+.p-button-rounded {
+  border-radius: 50%;
+  padding: 0.5rem;
+}
+
+.p-button-text {
+  background-color: transparent;
+  color: var(--primary-color, #007ad9);
+  padding: 0.5rem 0.75rem;
+}
+
+.p-button-text:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+input[type="text"] {
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-radius: 4px; /* Bordes redondeados */
+  padding: 0.5rem; /* Espaciado interno */
+  outline: none; /* Elimina el borde azul por defecto al seleccionar */
+  transition: border-color 0.3s ease; /* Transición suave en el borde */
+}
+
+input[type="text"]:focus {
+  border-color: #007ad9; /* Color del borde al enfocar */
+  box-shadow: 0 0 4px rgba(0, 122, 217, 0.5); /* Resalta el input al enfocar */
+}
+
+/* Ajustes de utilidades para Tailwind */
 @layer tailwind-utilities {
   @tailwind components;
   @tailwind utilities;
